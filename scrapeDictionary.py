@@ -4,12 +4,12 @@ txt_file = r"dictionary.txt"
 csv_file = 'dictionary.csv'
 
 with open(txt_file) as in_txt, open(csv_file, 'w') as out_csv:
-    out_csv.write("Word,Disambiguation,Description,Definition,Example\n") # Write the header
+    out_csv.write("Word,Disambiguation,Part of Speech,Definition,Notes\n") # Write the header
     csvwriter = csv.writer(out_csv)
     previous = next(in_txt)
     for line in in_txt:
         if len(previous.strip()) == 0 and line.isupper(): # We have arrived at a new word
-            disambiguation = ''
+            disambiguation = partofspeech = etymology = definition = notes = ''
             nextline = next(in_txt)
             for element in range(0, len(nextline)): # Determine if there is disambiguation
                 if nextline[element] == ',':
@@ -18,8 +18,12 @@ with open(txt_file) as in_txt, open(csv_file, 'w') as out_csv:
                     disambiguation = ''
                     break
                 disambiguation += nextline[element]
-            
-            csvwriter.writerow([line, disambiguation])
+            if (nextline.count(' n. ') > 0): partofspeech = 'n.'
+            if (nextline.count(' a. ') > 0): partofspeech = 'a.'
+            if (nextline.count(' v. ') > 0): partofspeech = 'v.'
+            if (nextline.count(' prep. ') > 0): partofspeech = 'prep.'
+            if (nextline.count(' adv. ') > 0): partofspeech = 'adv.'
+            csvwriter.writerow([line, disambiguation, partofspeech, etymology, definition, notes])
         #if "Defn:" in line:
             #out_csv.write(",".join(line.strip().split('\t')) + "\n")
         previous = line
@@ -36,5 +40,9 @@ a variable to hold the previous line, and if its length was 0 after removing whi
 
 My next roadblock was identifying whether there is a disambiguation, as some words have them while others do not.
 I decided on the case that if a comma comes before a space in the next line, then there is a disambiguation.
+
+My next challenge was determining part of speech. One option was to continue with string manipulation in the
+second line like I did for determining disambiguation, but I opted instead to simply check for the specific 
+parts of speech since there are so few. 
 
 '''
