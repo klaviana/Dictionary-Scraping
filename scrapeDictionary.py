@@ -18,18 +18,22 @@ with open(txt_file) as in_txt, open(csv_file, 'w') as out_csv:
                     disambiguation = ''
                     break
                 disambiguation += nextline[element]
-            if (nextline.count(' n. ') > 0): partofspeech = 'n.'
+            if (nextline.count(' n. ') > 0): partofspeech = 'n.' # Determine the part of speech if listed --> kind of hacky with the if statements..
             if (nextline.count(' a. ') > 0): partofspeech = 'a.'
             if (nextline.count(' v. ') > 0): partofspeech = 'v.'
             if (nextline.count(' prep. ') > 0): partofspeech = 'prep.'
             if (nextline.count(' adv. ') > 0): partofspeech = 'adv.'
-            csvwriter.writerow([line, disambiguation, partofspeech, etymology, definition, notes])
-        #if "Defn:" in line:
-            #out_csv.write(",".join(line.strip().split('\t')) + "\n")
+            while (definition == ''): # Iterate ensuing lines until we come to the definition
+                if (nextline.count('Defn: ') > 0):
+                    definition = nextline
+                    definition = definition[6:] # splice out the "Defn: "
+                    break
+                nextline = next(in_txt)
+            csvwriter.writerow([line, disambiguation, partofspeech, etymology, definition, notes]) #write
         previous = line
 
 '''
-Notes:
+Chronological Notes:
 
 My first roadblock was identifying the word. The definitions are easy to identify, since they follow "Defn: ".
 However the words themselves are just written. I identified some qualities that set them apart: 
@@ -44,5 +48,10 @@ I decided on the case that if a comma comes before a space in the next line, the
 My next challenge was determining part of speech. One option was to continue with string manipulation in the
 second line like I did for determining disambiguation, but I opted instead to simply check for the specific 
 parts of speech since there are so few. 
+
+The next hurdle was scraping for definition. It was easy to throw all the definitions in a csv file by searching
+for "Defn:", however the challenge becomes the fact that the definition occurs in a non-predetermined number of 
+lines after the word, while the disambiguation and part of speech both occurred in the line after the word. I chose
+to search the ensuing lines until I found "Defn:". 
 
 '''
