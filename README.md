@@ -1,1 +1,3 @@
 # Dictionary-Scraping
+
+scrapeDictionary.py is a program that scrapes a .txt file of Webster's English Dictionary and puts the data in a more accessible CSV file. In its current state, it tracks each word in the dictionary and lists out its disambiguation, part of speech, and definition. Future iterations of the program will look to increase the number of data points it registers -- such as etymology or examples -- as well as improve the overall efficiency.
