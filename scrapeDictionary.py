@@ -1,14 +1,15 @@
+# -*- coding: utf-8 -*-
 import csv
 
 txt_file = r"dictionary.txt"
 csv_file = 'dictionary.csv'
 
 with open(txt_file) as in_txt, open(csv_file, 'w') as out_csv:
-    out_csv.write("Word,Disambiguation,Part of Speech,Definition,Notes\n") # Write the header
+    out_csv.write("Word,Disambiguation,Part of Speech,Definition\n") # Write the header
     csvwriter = csv.writer(out_csv)
     previous = next(in_txt)
     for line in in_txt:
-        if len(previous.strip()) == 0 and line.isupper(): # We have arrived at a new word
+        if len(previous.strip()) == 0 and line.isupper() and line.count('***') < 1: # We have arrived at a new word
             disambiguation = partofspeech = etymology = definition = notes = ''
             nextline = next(in_txt)
             for element in range(0, len(nextline)): # Determine if there is disambiguation
@@ -29,8 +30,10 @@ with open(txt_file) as in_txt, open(csv_file, 'w') as out_csv:
                     definition = definition[6:] # splice out the "Defn: "
                     break
                 nextline = next(in_txt)
-            csvwriter.writerow([line, disambiguation, partofspeech, etymology, definition, notes]) #write
+            csvwriter.writerow([line, disambiguation, partofspeech, definition]) # Write to csv
         previous = line
+
+
 
 '''
 Chronological Notes:
@@ -50,8 +53,26 @@ second line like I did for determining disambiguation, but I opted instead to si
 parts of speech since there are so few. 
 
 The next hurdle was scraping for definition. It was easy to throw all the definitions in a csv file by searching
-for "Defn:", however the challenge becomes the fact that the definition occurs in a non-predetermined number of 
+for "Defn: ", however the challenge becomes the fact that the definition occurs in a non-predetermined number of 
 lines after the word, while the disambiguation and part of speech both occurred in the line after the word. I chose
 to search the ensuing lines until I found "Defn:". 
+'''
+
+
+
+'''
+Final Thoughts:
+
+I didn’t break up the function into smaller functions, mainly because I went over the suggested time limit. 
+I would have to think about the best way to do it with the way the program is checking lines sequentially, 
+but if I were to continue on this project, that would be one the first things I tackle.
+
+There is room for improvement in regards to efficiency. I do a lot of searching with if statements and for
+loops for each type of data I am extracting, and a few of them could probably be combined together seeing 
+as the same lines are getting iterated multiple times.
+
+I accounted for edge cases where possible. The first and last words both end up in the csv properly. That said, 
+it seems like there are a lot of intricacies within this dictionary, so I assume there are areas where my 
+algorithms do not perfectly catch them. My part of speech does not 
 
 '''
